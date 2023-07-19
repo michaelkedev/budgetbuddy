@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import RecordCard from "./components/RecordCard";
 
+const localStorage = window.localStorage;
+
+const dataParser = () => {
+  const data = JSON.parse(localStorage.getItem("costList") ?? "[]");
+  return data.map((d) => {
+    d.timestamp = new Date(d.timestamp);
+    return d;
+  });
+};
+
 const App = () => {
   const [count, setCount] = useState(0);
   const [cType, setCType] = useState("expense");
   const [item, setItem] = useState("");
-  const [costList, setCostList] = useState([]);
+  const [costList, setCostList] = useState(dataParser());
 
   const itemsList = {
     expense: ["早餐", "午餐", "晚餐", "油錢"],
@@ -24,6 +34,9 @@ const App = () => {
       timestamp: new Date(),
     };
     setCostList([...costList, data]);
+
+    localStorage.setItem("costList", JSON.stringify(costList));
+
     setCount(0);
     setItem("");
     setCType("expense");
